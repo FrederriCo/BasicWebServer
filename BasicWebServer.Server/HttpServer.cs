@@ -32,7 +32,7 @@ namespace BasicWebServer.Server
 
                 var networkSteram = connection.GetStream();
 
-                WriteResponse(networkSteram, "Hello from Server");
+                WriteResponse(networkSteram, "Hello from the server!");
 
                 connection.Close();
             }
