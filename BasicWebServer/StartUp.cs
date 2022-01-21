@@ -39,7 +39,7 @@ Content-Length: {contentLength}
 
                 networkStream.Write(responseByte);
 
-                //connection.Close();
+               // connection.Close();
             }
         }
     }
