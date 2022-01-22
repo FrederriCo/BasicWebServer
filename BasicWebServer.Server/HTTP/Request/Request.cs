@@ -1,5 +1,6 @@
 ﻿using BasicWebServer.Server.HTTP.Response;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BasicWebServer.Server.HTTP.Request
@@ -19,6 +20,44 @@ namespace BasicWebServer.Server.HTTP.Request
 
             var method = ParseMethod(startLine[0]);
             var url = startLine[1];
+
+            HeaderCollection headers = ParseHeaders(lines.Skip(1));
+
+            var bodyLines = lines.Skip(headers.Count + 2).ToArray();
+            var body = string.Join("\r\n", bodyLines);
+
+            return new Request
+            {
+                Method = method,
+                Url = url,
+                Headers = headers,
+                Body = body
+            };
+        }
+
+        private static HeaderCollection ParseHeaders(IEnumerable<string> headerLines)
+        {
+            var headerCollection = new HeaderCollection();
+
+            foreach (var headerLine in headerLines)
+            {
+                if (headerLine == string.Empty)
+                {
+                    break;
+                }
+
+                var headerParts = headerLine.Split(":", 2);
+
+                if (headerParts.Length != 2)
+                {
+                    throw new InvalidOperationException("Request is not valid.");
+                }
+
+                var headerName = headerParts[0];
+                var headerValue = headerParts[1].Trim();
+
+                headerCollection.Add(headerName, headerValue);
+            }
         }
 
         private static Method ParseMethod(string method)
