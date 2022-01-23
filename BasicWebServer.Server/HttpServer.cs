@@ -19,6 +19,15 @@ namespace BasicWebServer.Server
             serverListener = new TcpListener(this.ipAddress, port);           
         }
 
+        private string ReadRequest(NetworkStream networkStream)
+        {
+            var bufferLength = 1024;
+            var buffer = new byte[bufferLength];
+
+            var requestBuilder = new StringBuilder();
+
+        }
+
         public void Start()
         {
             this.serverListener.Start();
