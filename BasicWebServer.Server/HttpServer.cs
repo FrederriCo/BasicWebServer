@@ -51,7 +51,7 @@ namespace BasicWebServer.Server
         {
             this.serverListener.Start();
 
-            Console.WriteLine($"Server started on port {port}.");
+            Console.WriteLine($"Server started on port {port}...");
             Console.WriteLine("Listening for request.....");
 
             while (true)
