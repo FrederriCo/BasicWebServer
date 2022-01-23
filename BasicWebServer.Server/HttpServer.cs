@@ -26,6 +26,15 @@ namespace BasicWebServer.Server
 
             var requestBuilder = new StringBuilder();
 
+            do
+            {
+                var bytesRead = networkStream.Read(buffer, 0, bufferLength);
+
+                requestBuilder.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+            }
+            while (networkStream.DataAvailable);
+
+            return requestBuilder.ToString();
         }
 
         public void Start()
