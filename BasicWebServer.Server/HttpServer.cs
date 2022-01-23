@@ -50,9 +50,13 @@ namespace BasicWebServer.Server
 
                 var networkSteram = connection.GetStream();
 
-                WriteResponse(networkSteram, "Hello from the server!");
+                //WriteResponse(networkSteram, "Hello from the server!");
 
-                connection.Close();
+                var requestText = this.ReadRequest(networkSteram);
+
+                Console.WriteLine(requestText);
+
+                //connection.Close();
             }
         }
 
