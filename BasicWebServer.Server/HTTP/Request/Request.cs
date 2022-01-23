@@ -58,6 +58,8 @@ namespace BasicWebServer.Server.HTTP.Request
 
                 headerCollection.Add(headerName, headerValue);
             }
+
+            return headerCollection;
         }
 
         private static Method ParseMethod(string method)
