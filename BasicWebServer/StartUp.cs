@@ -10,8 +10,8 @@ namespace BasicWebServer
     {
         public static void Main()
         {
-            var server = new HttpServer("127.0.0.0", 8080);
-            server.Start();               
+           var server = new HttpServer("127.0.0.1", 5656);
+          server.Start();               
 
 
         }
