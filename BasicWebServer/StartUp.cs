@@ -9,11 +9,13 @@ namespace BasicWebServer
     public class StartUp
     {
         public static void Main()
-        {
-           var server = new HttpServer("127.0.0.1", 5656);
-          server.Start();               
 
+           => new HttpServer(routes => routes
+            .MapGet("/", new TextResponse("Hello from the server!"))
+            .MapGet("/", new HtmlResponse("<h1>HTML response</h1>"))
+            .MapGet("/", new RedirectdResponse("https://www.google.bg")))
 
-        }
+          .Start();
+
     }
 }
