@@ -1,4 +1,5 @@
 ﻿using BasicWebServer.Server.HTTP.Request;
+using BasicWebServer.Server.Routing;
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -12,12 +13,57 @@ namespace BasicWebServer.Server
         private readonly int port;
         private readonly TcpListener serverListener;
 
-        public HttpServer(string ipAddress, int port)
+        private readonly RoutingTable routingTable;
+
+        public HttpServer(string ipAddress, int port, Action<IRoutingTable> routingTableConfiguration)
         {
             this.ipAddress = IPAddress.Parse(ipAddress);
             this.port = port;
 
-            serverListener = new TcpListener(this.ipAddress, port);           
+            serverListener = new TcpListener(this.ipAddress, port);
+
+            routingTableConfiguration(this.routingTable = new RoutingTable());
+        }
+
+        public HttpServer(int port, Action<IRoutingTable> routingTable)
+            : this("127.0.0.1", port, routingTable)
+        {
+        }
+
+        public HttpServer(Action<IRoutingTable> routingTable)
+            : this(8080, routingTable)
+        {
+        }
+
+       
+
+        public void Start()
+        {
+            this.serverListener.Start();
+
+            Console.WriteLine($"Server started on port {port}...");
+            Console.WriteLine("Listening for request.....");
+
+            while (true)
+            {
+                var connection = serverListener.AcceptTcpClient();
+
+                var networkStream = connection.GetStream();
+
+                //WriteResponse(networkSteram, "Hello from the server!");
+
+                var requestText = this.ReadRequest(networkStream);
+
+                Console.WriteLine(requestText);
+
+                var request = Request.Parse(requestText);
+
+                var response = this.routingTable.MatchRequest(request);
+
+                WriteResponse(networkStream, response.ToString());
+
+                connection.Close();
+            }
         }
 
         private string ReadRequest(NetworkStream networkStream)
@@ -47,36 +93,7 @@ namespace BasicWebServer.Server
             return requestBuilder.ToString();
         }
 
-        public void Start()
-        {
-            this.serverListener.Start();
-
-            Console.WriteLine($"Server started on port {port}...");
-            Console.WriteLine("Listening for request.....");
-
-            while (true)
-            {
-                var connection = serverListener.AcceptTcpClient();
-
-                var networkSteram = connection.GetStream();
-
-                //WriteResponse(networkSteram, "Hello from the server!");
-
-                var requestText = this.ReadRequest(networkSteram);
-
-                Console.WriteLine(requestText);
-
-                //var request = Request.Parse(requestText);
-
-                //var response = this.routingTable.MatchRequest(request);
-
-                //WriteResponse(networkStream, response.ToString());
-
-                connection.Close();
-            }
-        }
-
-        private void WriteResponse(NetworkStream networkSteram, string message)
+        private void WriteResponse(NetworkStream networkStream, string message)
         {
             var contentLength = Encoding.UTF8.GetByteCount(message);
 
@@ -87,7 +104,7 @@ Content-Length: {contentLength}
 {message}";
             var responseByte = Encoding.UTF8.GetBytes(response);
 
-            networkSteram.Write(responseByte);            
+            networkStream.Write(responseByte);            
 
         }
     }

@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Text;
 
 namespace BasicWebServer.Server.HTTP.Response
 {
@@ -18,5 +19,26 @@ namespace BasicWebServer.Server.HTTP.Response
         public HeaderCollection Headers { get; } = new HeaderCollection();
 
         public string Body { get; set; }
+
+        public override string ToString()
+        {
+            var result = new StringBuilder();
+
+            result.Append($"HTTP/1.1 {(int)this.StatusCode} {this.StatusCode}");
+
+            foreach (var header in this.Headers)
+            {
+                result.AppendLine(header.ToString());
+            }
+
+            result.AppendLine();
+
+            if (!string.IsNullOrEmpty(this.Body))
+            {
+                result.AppendLine(this.Body);
+            }
+
+            return result.ToString();
+        }
     }
 }
