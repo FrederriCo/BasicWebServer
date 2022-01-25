@@ -19,7 +19,7 @@ namespace BasicWebServer
            => new HttpServer(routes => routes
             .MapGet("/", new TextResponse("Hello from the server!"))
             .MapGet("/Redirect", new RedirectResponse("https://www.softuni.org"))
-            .MapGet("/Html", new HtmlResponse(StartUp.HtmlForm))
+            .MapGet("/HTML", new HtmlResponse(StartUp.HtmlForm))
             .MapPost("/HTML", new TextResponse("")))
 
           .Start();
