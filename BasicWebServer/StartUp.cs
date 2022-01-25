@@ -2,6 +2,8 @@
 using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.HTTP.Response;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
@@ -24,20 +26,36 @@ namespace BasicWebServer
 
         private const string FileName = "content.txt";
         public static async Task Main()
+        {
+            await DownloadSitesAsTextFile(StartUp.FileName,
+                new string[] { "http://judge.softuni.org/", "http://softuni.org" });
 
-           => await new HttpServer(routes => routes
-            .MapGet("/", new TextResponse("Hello from the server!"))
-            .MapGet("/Redirect", new RedirectResponse("https://www.softuni.org"))
-            .MapGet("/Html", new HtmlResponse(StartUp.HtmlForm))
-            .MapPost("/HTML", new TextResponse("", StartUp.AddFormDataAction))
-            .MapGet("/Content", new HtmlResponse(StartUp.DownloadForm))
-            .MapPost("/Content", new TextFileResponse(StartUp.FileName)))
+            var server = new HttpServer(routes => routes
+           .MapGet("/", new TextResponse("Hello from the server!"))
+           .MapGet("/Redirect", new RedirectResponse("https://www.softuni.org"))
+           .MapGet("/Html", new HtmlResponse(StartUp.HtmlForm))
+           .MapPost("/HTML", new TextResponse("", StartUp.AddFormDataAction))
+           .MapGet("/Content", new HtmlResponse(StartUp.DownloadForm))
+           .MapPost("/Content", new TextFileResponse(StartUp.FileName)))
 
-          .Start();
+           .Start();
+        }
 
         private static async Task DownloadSitesAsTextFile(string fileName, string[] urls)
         {
             var downloads = new List<Task<string>>();
+
+            foreach (var url in urls)
+            {
+                downloads.Add(DownloadWebSiteContent(url));
+            }
+
+            var responses = await Task.WhenAll(downloads);
+
+            var responseString = string.Join(Environment.NewLine +
+                new String('-', 100), responses);
+
+            await File.WriteAllTextAsync(fileName, responseString);
         }
         private static async Task<string> DownloadWebSiteContent(string url)
         {
