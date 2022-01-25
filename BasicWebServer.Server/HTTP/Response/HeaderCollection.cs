@@ -13,13 +13,10 @@ namespace BasicWebServer.Server.HTTP.Response
 
         public int Count => this.headers.Count;
 
-        public void Add(string name, string value)
-        {
-            var header = new Header(name, value);
+        public bool Contains(string name) => this.headers.ContainsKey(name);
 
-            this.headers.Add(name, header);
-        }
-
+        public void Add(string name, string value) => this.headers[name] = new Header(name, value);
+      
         public IEnumerator<Header> GetEnumerator() => this.headers.Values.GetEnumerator();
 
 

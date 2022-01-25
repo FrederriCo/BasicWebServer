@@ -1,6 +1,7 @@
 ﻿  
 using System;
 using System.Text;
+using BasicWebServer.Server.HTTP.Request;
 
 namespace BasicWebServer.Server.HTTP.Response
 {
@@ -19,6 +20,8 @@ namespace BasicWebServer.Server.HTTP.Response
         public HeaderCollection Headers { get; } = new HeaderCollection();
 
         public string Body { get; set; }
+
+        public Action<Request, Response> PreRenderAction { get; protected set; }
 
         public override string ToString()
         {

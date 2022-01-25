@@ -1,4 +1,5 @@
 ﻿using BasicWebServer.Server;
+using BasicWebServer.Server.HTTP.Request;
 using BasicWebServer.Server.HTTP.Response;
 using System;
 using System.Net;
@@ -19,10 +20,20 @@ namespace BasicWebServer
            => new HttpServer(routes => routes
             .MapGet("/", new TextResponse("Hello from the server!"))
             .MapGet("/Redirect", new RedirectResponse("https://www.softuni.org"))
-            .MapGet("/HTML", new HtmlResponse(StartUp.HtmlForm))
-            .MapPost("/HTML", new TextResponse("")))
+            .MapGet("/Html", new HtmlResponse(StartUp.HtmlForm))
+            .MapPost("/HTML", new TextResponse("", StartUp.AddFormDataAction)))
 
           .Start();
 
+        private static void AddFormDataAction(Request request, Response response)
+        {
+            response.Body = "";
+
+            foreach (var (key, value) in request.Form)
+            {
+                response.Body += $"{key} - {value}";
+                response.Body += Environment.NewLine;
+            }
+        }
     }
 }
