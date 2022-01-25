@@ -1,11 +1,12 @@
 ﻿
 using BasicWebServer.Server.Common;
+using System.Text;
 
 namespace BasicWebServer.Server.HTTP.Response
 {
     public class ContentResponse : Response
     {
-        public ContentResponse(string content, string contentType) 
+        public ContentResponse(string content, string contentType)
             : base(StatusCode.OK)
         {
             Guard.AgainstNull(content);
@@ -13,7 +14,20 @@ namespace BasicWebServer.Server.HTTP.Response
 
             this.Headers.Add(Header.ContentType, contentType);
 
-            this.Body = content;
+            this.Body = content;      
+
+        }
+
+        public override string ToString()
+        {
+            if (this.Body != null)
+            {
+                var contentLength = Encoding.UTF8.GetByteCount(this.Body).ToString();
+                this.Headers.Add(Header.ContentLength, contentLength);
+            }
+
+            return base.ToString();
         }
     }
+    
 }
