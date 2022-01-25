@@ -1,4 +1,4 @@
-﻿
+﻿  
 using System;
 using System.Text;
 
@@ -24,7 +24,7 @@ namespace BasicWebServer.Server.HTTP.Response
         {
             var result = new StringBuilder();
 
-            result.Append($"HTTP/1.1 {(int)this.StatusCode} {this.StatusCode}");
+            result.AppendLine($"HTTP/1.1 {(int)this.StatusCode} {this.StatusCode}");
 
             foreach (var header in this.Headers)
             {
@@ -35,7 +35,7 @@ namespace BasicWebServer.Server.HTTP.Response
 
             if (!string.IsNullOrEmpty(this.Body))
             {
-                result.AppendLine(this.Body);
+                result.Append(this.Body);
             }
 
             return result.ToString();

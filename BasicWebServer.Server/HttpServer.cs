@@ -1,4 +1,5 @@
 ﻿using BasicWebServer.Server.HTTP.Request;
+using BasicWebServer.Server.HTTP.Response;
 using BasicWebServer.Server.Routing;
 using System;
 using System.Net;
@@ -60,7 +61,7 @@ namespace BasicWebServer.Server
 
                 var response = this.routingTable.MatchRequest(request);
 
-                WriteResponse(networkStream, response.ToString());
+                WriteResponse(networkStream, response);
 
                 connection.Close();
             }
@@ -93,19 +94,11 @@ namespace BasicWebServer.Server
             return requestBuilder.ToString();
         }
 
-        private void WriteResponse(NetworkStream networkStream, string message)
+        private void WriteResponse(NetworkStream networkStream, Response response)
         {
-            var contentLength = Encoding.UTF8.GetByteCount(message);
+            var responseByte = Encoding.UTF8.GetBytes(response.ToString());
 
-            var response = $@"HTTP/1.1 200 OK
-Content-Type: text/plain; charset=UTF-8
-Content-Length: {contentLength}
-
-{message}";
-            var responseByte = Encoding.UTF8.GetBytes(response);
-
-            networkStream.Write(responseByte);            
-
+            networkStream.Write(responseByte);
         }
     }
 }

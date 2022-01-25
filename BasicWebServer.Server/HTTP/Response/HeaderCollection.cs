@@ -8,7 +8,9 @@ namespace BasicWebServer.Server.HTTP.Response
         private readonly Dictionary<string, Header> headers;
 
         public HeaderCollection() => headers = new Dictionary<string, Header>();
-            
+
+        public string this[string name] => this.headers[name].Value;
+
         public int Count => this.headers.Count;
 
         public void Add(string name, string value)
