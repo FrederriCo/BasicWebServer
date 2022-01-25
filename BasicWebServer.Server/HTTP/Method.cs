@@ -1,5 +1,5 @@
 ﻿
-namespace BasicWebServer.Server.HTTP.Request
+namespace BasicWebServer.Server.HTTP
 {
     public enum Method
     {

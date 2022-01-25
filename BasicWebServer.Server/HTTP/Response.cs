@@ -1,7 +1,6 @@
-﻿  
-using System;
+﻿using System;
 using System.Text;
-using BasicWebServer.Server.HTTP.Request;
+
 
 namespace BasicWebServer.Server.HTTP.Response
 {

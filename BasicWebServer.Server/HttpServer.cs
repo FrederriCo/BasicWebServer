@@ -1,10 +1,11 @@
-﻿using BasicWebServer.Server.HTTP.Request;
+﻿using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.HTTP.Response;
 using BasicWebServer.Server.Routing;
 using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BasicWebServer.Server
 {
@@ -12,7 +13,7 @@ namespace BasicWebServer.Server
     {
         private readonly IPAddress ipAddress;
         private readonly int port;
-        private readonly TcpListener serverListener;
+        private readonly TcpListener serverListener;        
 
         private readonly RoutingTable routingTable;
 
@@ -38,7 +39,7 @@ namespace BasicWebServer.Server
 
        
 
-        public void Start()
+        public async Task Start()
         {
             this.serverListener.Start();
 
@@ -47,31 +48,33 @@ namespace BasicWebServer.Server
 
             while (true)
             {
-                var connection = serverListener.AcceptTcpClient();
+                var connection = await serverListener.AcceptTcpClientAsync();
 
-                var networkStream = connection.GetStream();
+                _ = Task.Run(async () =>
+                {
 
-                //WriteResponse(networkSteram, "Hello from the server!");
+                    var networkStream = connection.GetStream();
 
-                var requestText = this.ReadRequest(networkStream);
+                    var requestText = await this.ReadRequest(networkStream);
 
-                Console.WriteLine(requestText);
+                    Console.WriteLine(requestText);
 
-                var request = Request.Parse(requestText);
+                    var request = Request.Parse(requestText);
 
-                var response = this.routingTable.MatchRequest(request);
+                    var response = this.routingTable.MatchRequest(request);
 
-                if (response.PreRenderAction != null)
-                    response.PreRenderAction(request, response);
-                
+                    if (response.PreRenderAction != null)
+                        response.PreRenderAction(request, response);
 
-                WriteResponse(networkStream, response);
 
-                connection.Close();
+                    await WriteResponse(networkStream, response);
+
+                    connection.Close();
+                });
             }
         }
 
-        private string ReadRequest(NetworkStream networkStream)
+        async Task<string> ReadRequest(NetworkStream networkStream)
         {
             var bufferLength = 1024;
             var buffer = new byte[bufferLength];
@@ -82,7 +85,7 @@ namespace BasicWebServer.Server
 
             do
             {
-                var bytesRead = networkStream.Read(buffer, 0, bufferLength);
+                var bytesRead = await networkStream.ReadAsync(buffer, 0, bufferLength);
 
                 totalBytes += bytesRead;
 
@@ -98,11 +101,11 @@ namespace BasicWebServer.Server
             return requestBuilder.ToString();
         }
 
-        private void WriteResponse(NetworkStream networkStream, Response response)
+        private async Task WriteResponse(NetworkStream networkStream, Response response)
         {
             var responseByte = Encoding.UTF8.GetBytes(response.ToString());
 
-            networkStream.Write(responseByte);
+            await networkStream.WriteAsync(responseByte);
         }
     }
 }

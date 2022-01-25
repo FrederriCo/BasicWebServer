@@ -1,4 +1,4 @@
-﻿namespace BasicWebServer.Server.HTTP.Response
+﻿namespace BasicWebServer.Server.HTTP
 {
     public enum StatusCode
     {

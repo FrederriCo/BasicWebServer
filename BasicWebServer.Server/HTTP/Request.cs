@@ -1,17 +1,17 @@
-﻿using BasicWebServer.Server.HTTP.Response;
+﻿
+using BasicWebServer.Server.HTTP.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BasicWebServer.Server.HTTP.Request
+namespace BasicWebServer.Server.HTTP
 {
     public class Request
     {
         public Method Method { get; private set; }
         public string Url { get; private set; }
-        public HeaderCollection Headers{ get; private set; }
-
+        public HeaderCollection Headers { get; private set; }
         public string Body { get; private set; }
 
         public IReadOnlyDictionary<string, string> Form { get; private set; }
@@ -47,7 +47,7 @@ namespace BasicWebServer.Server.HTTP.Request
         {
             var formCollection = new Dictionary<string, string>();
 
-            if (headers.Contains(Header.ContentType) && 
+            if (headers.Contains(Header.ContentType) &&
                 headers[Header.ContentType] == ContentType.FormUrlEncoded)
             {
                 var parsedResult = ParseFormData(body);
@@ -70,7 +70,7 @@ namespace BasicWebServer.Server.HTTP.Request
                         .ToDictionary(
                         part => part[0],
                         part => part[1],
-                        StringComparer.InvariantCulture);
+                        StringComparer.InvariantCultureIgnoreCase);
 
         private static HeaderCollection ParseHeaders(IEnumerable<string> headerLines)
         {

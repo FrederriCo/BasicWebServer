@@ -1,10 +1,11 @@
 ﻿using BasicWebServer.Server;
-using BasicWebServer.Server.HTTP.Request;
+using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.HTTP.Response;
 using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BasicWebServer
 {
@@ -15,9 +16,9 @@ namespace BasicWebServer
             Age: <input type='number' name='Age' />
             <input type='submit' value='Save' />
             </form>";
-        public static void Main()
+        public static async Task Main()
 
-           => new HttpServer(routes => routes
+           => await new HttpServer(routes => routes
             .MapGet("/", new TextResponse("Hello from the server!"))
             .MapGet("/Redirect", new RedirectResponse("https://www.softuni.org"))
             .MapGet("/Html", new HtmlResponse(StartUp.HtmlForm))

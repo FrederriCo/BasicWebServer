@@ -1,4 +1,4 @@
-﻿using BasicWebServer.Server.HTTP.Request;
+﻿using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.HTTP.Response;
 
 namespace BasicWebServer.Server.Routing
