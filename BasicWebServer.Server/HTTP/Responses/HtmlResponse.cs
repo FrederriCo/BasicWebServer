@@ -7,7 +7,7 @@ namespace BasicWebServer.Server.HTTP.Response
     {
         public HtmlResponse(string text,
             Action<Request, Response> preRenderAction = null) 
-            : base(text, ContentType.html, preRenderAction)
+            : base(text, ContentType.Html, preRenderAction)
         {
         }
     }

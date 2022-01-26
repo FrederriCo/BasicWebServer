@@ -8,7 +8,7 @@ namespace BasicWebServer.Server.HTTP.Response
     {
         public TextResponse(string text,
             Action<Request, Response> preRenderAction = null)
-            : base(text, ContentType.PlainText)
+            : base(text, ContentType.PlainText, preRenderAction)
         {
         }
     }

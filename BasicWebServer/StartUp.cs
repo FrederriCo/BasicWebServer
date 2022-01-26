@@ -39,9 +39,31 @@ namespace BasicWebServer
            .MapPost("/HTML", new TextResponse("", StartUp.AddFormDataAction))
            .MapGet("/Content", new HtmlResponse(StartUp.DownloadForm))
            .MapPost("/Content", new TextFileResponse(StartUp.FileName))
-           .MapGet("/Cookies", new HtmlResponse("<h1>Coockies Sets!</h1>", StartUp.AddCookieAction)));
+           .MapGet("/Cookies", new HtmlResponse("", StartUp.AddCookieAction))
+           .MapGet("/Session", new TextResponse("", StartUp.DisplaySessionInfoAction)));
 
            await server.Start();
+        }
+
+        private static void DisplaySessionInfoAction(Request request, Response response)
+        {
+            var sessionExists = request.Session.ContainsKey(Session.SessionCurrentDateKey);
+
+            var bodyText = "";
+
+            if (sessionExists)
+            {
+                var curnetDate = request.Session[Session.SessionCurrentDateKey];
+                bodyText = $"Stored date: {curnetDate}!"; 
+            }
+            else
+            {
+                bodyText = "Current date stored;";
+            }
+
+            response.Body = "";
+            response.Body += bodyText;
+
         }
 
         private static void AddCookieAction(Request request, Response response)
