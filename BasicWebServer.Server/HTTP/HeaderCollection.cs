@@ -7,17 +7,22 @@ namespace BasicWebServer.Server.HTTP.Response
     {
         private readonly Dictionary<string, Header> headers;
 
-        public HeaderCollection() => headers = new Dictionary<string, Header>();
+        public HeaderCollection()
+            => headers = new Dictionary<string, Header>();
 
-        public string this[string name] => this.headers[name].Value;
+        public string this[string name] 
+            => this.headers[name].Value;
 
         public int Count => this.headers.Count;
 
-        public bool Contains(string name) => this.headers.ContainsKey(name);
+        public bool Contains(string name) 
+            => this.headers.ContainsKey(name);
 
-        public void Add(string name, string value) => this.headers[name] = new Header(name, value);
+        public void Add(string name, string value) 
+            => this.headers[name] = new Header(name, value);
       
-        public IEnumerator<Header> GetEnumerator() => this.headers.Values.GetEnumerator();
+        public IEnumerator<Header> GetEnumerator() 
+            => this.headers.Values.GetEnumerator();
 
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();

@@ -75,7 +75,7 @@ namespace BasicWebServer.Server
             }
         }
 
-        private void AddSession(Request request, Response response)
+        private static void AddSession(Request request, Response response)
         {
             var sessionExists = request.Session
                 .ContainsKey(Session.SessionCurrentDateKey);
@@ -89,7 +89,7 @@ namespace BasicWebServer.Server
             }
         }
 
-        async Task<string> ReadRequest(NetworkStream networkStream)
+        private async Task<string> ReadRequest(NetworkStream networkStream)
         {
             var bufferLength = 1024;
             var buffer = new byte[bufferLength];
@@ -119,6 +119,8 @@ namespace BasicWebServer.Server
         private async Task WriteResponse(NetworkStream networkStream, Response response)
         {
             var responseByte = Encoding.UTF8.GetBytes(response.ToString());
+
+           
 
             await networkStream.WriteAsync(responseByte);
         }

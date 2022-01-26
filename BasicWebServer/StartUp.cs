@@ -54,7 +54,8 @@ namespace BasicWebServer
                 var cookieText = new StringBuilder();
                 cookieText.AppendLine("<h1>Cookies</h1>");
 
-                cookieText.Append("<table border='1'><tr><th>Name</th><th>Value</th></tr>");
+                cookieText
+                    .Append("<table border='1'><tr><th>Name</th><th>Value</th></tr>");
 
                 foreach (var cookie in request.Cookies)
                 {
@@ -66,7 +67,7 @@ namespace BasicWebServer
                     cookieText.Append("</tr>");
                 }
 
-                cookieText.Append("<table>");
+                cookieText.Append("</table>");
 
                 bodyText = cookieText.ToString();
             }
@@ -74,6 +75,9 @@ namespace BasicWebServer
             {
                 bodyText = "<h1>Cookie set!</h1>";
             }
+
+            response.Body = "";
+            response.Body += bodyText;
 
             if (!requestHasCoookies)
             {
