@@ -9,7 +9,7 @@ namespace BasicWebServer.Server.HTTP
 
         public const string SessionCurrentDateKey = "CurrentDate";
 
-        public const string SessionUserkey = "AuthenticateduserId";
+        public const string SessionUserKey = "AuthenticateduserId";
 
         private Dictionary<string, string> data;
 
@@ -32,5 +32,7 @@ namespace BasicWebServer.Server.HTTP
 
         public bool ContainsKey(string key) 
             => this.data.ContainsKey(key);
+
+        public void Clear() => this.data.Clear(); 
     }
 }

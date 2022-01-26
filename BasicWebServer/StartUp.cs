@@ -50,9 +50,35 @@ namespace BasicWebServer
            .MapPost("/Content", new TextFileResponse(StartUp.FileName))
            .MapGet("/Cookies", new HtmlResponse("", StartUp.AddCookieAction))
            .MapGet("/Session", new TextResponse("", StartUp.DisplaySessionInfoAction))
-           .MapGet("/Login", new HtmlResponse(StartUp.LoginForm)));
+           .MapGet("/Login", new HtmlResponse(StartUp.LoginForm))
+           .MapGet("/Login", new HtmlResponse("", StartUp.LoginAction)));
 
            await server.Start();
+        }
+
+        private static void LoginAction(Request request, Response response)
+        {
+            request.Session.Clear();
+
+            var bodyText = "";
+
+            var usernameMatches = request.Form["Username"] == StartUp.Username;
+            var passwordMatches = request.Form["Password"] == StartUp.Password;
+
+            if (usernameMatches && passwordMatches)
+            {
+                request.Session[Session.SessionUserKey] = "MyUserId";
+                response.Cookies.Add(Session.SessionCookieName, request.Session.Id);
+
+                bodyText = "<h3>Logged successfully!</h3>";
+            }
+            else
+            {
+                bodyText = StartUp.LoginForm;
+            }
+
+            response.Body = "";
+            response.Body += bodyText;
         }
 
         private static void DisplaySessionInfoAction(Request request, Response response)
