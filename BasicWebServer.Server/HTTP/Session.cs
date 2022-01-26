@@ -19,7 +19,7 @@ namespace BasicWebServer.Server.HTTP
             this.data = new Dictionary<string, string>();
         }
 
-        public int Id { get; init; }
+        public string Id { get; init; }
 
         public string this[string key]
         {

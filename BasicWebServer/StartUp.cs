@@ -46,7 +46,7 @@ namespace BasicWebServer
 
         private static void AddCookieAction(Request request, Response response)
         {
-            var requestHasCoookies = request.Cookies.Any();
+            var requestHasCoookies = request.Cookies.Any(c => c.Name != Session.SessionCookieName);
             var bodyText = "";
 
             if (requestHasCoookies)
