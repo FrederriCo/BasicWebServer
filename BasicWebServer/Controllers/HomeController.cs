@@ -65,7 +65,7 @@ namespace BasicWebServer.Controllers
         public Response Cookies()
         {
             if (Request.Cookies.Any(
-                c => c.Name != Session.SessionCookieName))
+                c => c.Name != BasicWebServer.Server.HTTP.Session.SessionCookieName))
             {
                 var cookieText = new StringBuilder();
                 cookieText.AppendLine("<h1>Cookies</h1>");
