@@ -57,7 +57,7 @@ namespace BasicWebServer.Controllers
 
         public Response GetUserData()
         {
-            if (Request.Session.ContainsKey(Session.SessionUserKey))
+            if (this.Request.Session.ContainsKey(Session.SessionUserKey))
             {
                
                 return Html( $"<h3>Currently Logged-in user is " +
