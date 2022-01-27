@@ -1,6 +1,7 @@
 ﻿using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.HTTP.Response;
 using System.Runtime.CompilerServices;
+using BasicWebServer.Viwes;
 
 
 namespace BasicWebServer.Server.Controllers
@@ -38,7 +39,7 @@ namespace BasicWebServer.Server.Controllers
 
         protected Response View([CallerMemberName] string viewName = "")
             => new ViewResponse(viewName, this.GetControllerName());
-
+        
         private string GetControllerName()
             => this.GetType().Name.Replace(nameof(Controller), string.Empty);
 

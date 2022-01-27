@@ -32,15 +32,17 @@ namespace BasicWebServer.Controllers
 
         }
 
-        public Response Index() => Text("Hello from the server!");
+        public Response Index() => View();
 
         public Response Html() => View();
 
         public Response Redirect() => Redirect("https://softuni.bg");
 
-        public Response Content() => Html(HomeController.DownloadForm);
+        public Response Content() => View();
 
         public Response Html() => Html(HomeController.HtmlForm);
+
+        public Response Login() => View();
 
         public Response HtmlFormPost()
         {
