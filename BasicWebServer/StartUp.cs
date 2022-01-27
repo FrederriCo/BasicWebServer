@@ -1,13 +1,13 @@
-﻿using BasicWebServer.Server;
+﻿using BasicWebServer.Controllers;
+using BasicWebServer.Server;
 using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.HTTP.Response;
+using BasicWebServer.Server.Routing;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -16,18 +16,6 @@ namespace BasicWebServer
 {
     public class StartUp
     {
-        private const string HtmlForm = @"<form action='/HTML' method='POST'>
-            Name: <input type='text' name='Name' />
-            Age: <input type='number' name='Age' />
-            <input type='submit' value='Save' />
-            </form>";
-
-        private const string DownloadForm = @"<form action='/Content' method='POST'>
-            <input type='submit' value='Download Sites Content' />
-            </form>";
-
-        private const string FileName = "content.txt";
-
         private const string LoginForm = @"<form action='/Login' method='POST'>
             Username: <input type='text' name='Username'/>
             Password: <input type='text' name='Password'/>
@@ -38,24 +26,24 @@ namespace BasicWebServer
         private const string Password = "user123";
         public static async Task Main()
         {
-            await DownloadSitesAsTextFile(StartUp.FileName,
-                new string[] { "https://www.yahoo.com", "https://www.dir.bg" });
+            //await DownloadSitesAsTextFile(StartUp.FileName,
+            //    new string[] { "https://www.yahoo.com", "https://www.dir.bg" });
 
             var server = new HttpServer(routes => routes
-           .MapGet("/", new TextResponse("Hello from the server!"))
-           .MapGet("/Redirect", new RedirectResponse("https://www.softuni.org"))
-           .MapGet("/Html", new HtmlResponse(StartUp.HtmlForm))
-           .MapPost("/HTML", new TextResponse("", StartUp.AddFormDataAction))
-           .MapGet("/Content", new HtmlResponse(StartUp.DownloadForm))
-           .MapPost("/Content", new TextFileResponse(StartUp.FileName))
-           .MapGet("/Cookies", new HtmlResponse("", StartUp.AddCookieAction))
-           .MapGet("/Session", new TextResponse("", StartUp.DisplaySessionInfoAction))
-           .MapGet("/Login", new HtmlResponse(StartUp.LoginForm))
-           .MapPost("/Login", new HtmlResponse("", StartUp.LoginAction))
-           .MapGet("/Logout", new HtmlResponse("", StartUp.LogoutAction))
-           .MapGet("/UserProfile", new HtmlResponse("", StartUp.GetUserDataAction)));
+           .MapGet<HomeController>("/", c => c.Index())
+           .MapGet<HomeController>("/Redirect", c => c.Redirect())
+           .MapGet<HomeController>("/Html", c => c.Html())
+           .MapPost<HomeController>("/HTML", c => c.HtmlFormPost())
+           .MapGet<HomeController>("/Content", c => c.Content())
+           .MapPost<HomeController>("/Content", c => c.DownloadContent())
+           .MapGet<HomeController>("/Cookies", c => c.Cookies())
+           .MapGet<HomeController>("/Session", c => c.Session())));
+            //.MapGet("/Login", new HtmlResponse(StartUp.LoginForm))
+            //.MapPost("/Login", new HtmlResponse("", StartUp.LoginAction))
+            //.MapGet("/Logout", new HtmlResponse("", StartUp.LogoutAction))
+            //.MapGet("/UserProfile", new HtmlResponse("", StartUp.GetUserDataAction)));
 
-           await server.Start();
+            await server.Start();
         }
 
         private static void GetUserDataAction(Request request, Response response)
@@ -79,7 +67,7 @@ namespace BasicWebServer
             request.Session.Clear();
 
             response.Body = "";
-            response.Body += "<h3>Logged out successfully!</h3>"; 
+            response.Body += "<h3>Logged out successfully!</h3>";
         }
 
         private static void LoginAction(Request request, Response response)
@@ -116,7 +104,7 @@ namespace BasicWebServer
             if (sessionExists)
             {
                 var curnetDate = request.Session[Session.SessionCurrentDateKey];
-                bodyText = $"Stored date: {curnetDate}!"; 
+                bodyText = $"Stored date: {curnetDate}!";
             }
             else
             {
@@ -169,35 +157,7 @@ namespace BasicWebServer
                 response.Cookies.Add("My-Second-Cookie", "My-Second-Value");
             }
         }
-        private static async Task DownloadSitesAsTextFile(string fileName, string[] urls)
-        {
-            var downloads = new List<Task<string>>();
-
-            foreach (var url in urls)
-            {
-                downloads.Add(DownloadWebSiteContent(url));
-            }
-
-            var responses = await Task.WhenAll(downloads);
-
-            var responseString = string.Join(Environment.NewLine +
-                new String('-', 100), responses);
-
-            await File.WriteAllTextAsync(fileName, responseString);
-        }
-        private static async Task<string> DownloadWebSiteContent(string url)
-        {
-            var httpClient = new HttpClient();
-
-            using (httpClient)
-            {
-                var response = await httpClient.GetAsync(url);
-
-                var html = await response.Content.ReadAsStringAsync();
-
-                return html.Substring(0, 2000);
-            }
-        }
+       
         private static void AddFormDataAction(Request request, Response response)
         {
             response.Body = "";

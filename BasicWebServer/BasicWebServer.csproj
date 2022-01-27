@@ -9,4 +9,9 @@
     <ProjectReference Include="..\BasicWebServer.Server\BasicWebServer.Server.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Viwes\" />
+  </ItemGroup>
+
 </Project>
