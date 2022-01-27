@@ -1,4 +1,5 @@
-﻿using BasicWebServer.Server.Controllers;
+﻿using BasicWebServer.Models;
+using BasicWebServer.Server.Controllers;
 using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.HTTP.Response;
 using System;
@@ -35,15 +36,16 @@ namespace BasicWebServer.Controllers
 
         public Response HtmlFormPost()
         {
-            string formdata = string.Empty;
+            var name = Request.Form["Name"];
+            var age = Request.Form["Age"];
 
-            foreach (var (key, value) in this.Request.Form)
+            var model = new FormViewModel()
             {
-                formdata += $"{key} - {value}";
-                formdata += Environment.NewLine;
-            }
+                Name = name,
+                Age = int.Parse(age)
+            };
 
-            return Text(formdata);
+            return View(model);
         }
 
         public Response DownloadContent()
