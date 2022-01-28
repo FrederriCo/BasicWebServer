@@ -89,6 +89,10 @@ namespace BasicWebServer.Controllers
 
                 return Html(bodyText);
             }
+            else
+            {
+                bodyText = "<h1>Cookies set!</h1>";
+            }
 
             var cookies = new CookieCollection();
 
