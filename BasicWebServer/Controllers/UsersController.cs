@@ -25,27 +25,27 @@ namespace BasicWebServer.Controllers
 
         public Response LogInUser()
         {
-            Request.Session.Clear();           
+            Request.Session.Clear();
+
+            var bodyText = "";
 
             var usernameMatches = Request.Form["Username"] == UsersController.Username;
             var passwordMatches = Request.Form["Password"] == UsersController.Password;
 
             if (usernameMatches && passwordMatches)
             {
-                if (Request.Session.ContainsKey(Session.SessionUserKey))
-                {
-                    Request.Session[Session.SessionUserKey] = "MyUserId";
+                Request.Session[Session.SessionUserKey] = "MyUserId";
+                CookieCollection cookies = new CookieCollection();
+                cookies.Add(Session.SessionCookieName,
+                    Request.Session.Id);
 
-                    var cookies = new CookieCollection();
-                    cookies.Add(Session.SessionCookieName, Request.Session.Id);
+                bodyText = "<h3>Logged successfully!</h3>";
 
-                    return Html("<h3> Logged successfully! </h3>", cookies);
-                }
-
-                return Html("<h3> Logged successfully! </h3>");
+                return Html(bodyText, cookies);
             }
 
-            return Redirect("/Login");           
+            return Redirect("/Login");
+
         }
 
         public Response Logout()
@@ -56,7 +56,7 @@ namespace BasicWebServer.Controllers
         }
 
         public Response GetUserData()
-        {
+            {
             if (this.Request.Session.ContainsKey(Session.SessionUserKey))
             {
                
