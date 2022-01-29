@@ -45,7 +45,6 @@ namespace BasicWebServer.Controllers
             }
 
             return Redirect("/Login");
-
         }
 
         public Response Logout()
