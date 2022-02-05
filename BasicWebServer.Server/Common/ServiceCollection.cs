@@ -53,7 +53,11 @@ namespace BasicWebServer.Server.Common
             {
                 var parametarType = parametars[i].ParameterType;
                 var parametarValue = CreateInstance(parametarType);
+
+                parametarValues[i] = parametarValues;
             }
+
+            return constructor.Invoke(parametarValues);
            
         }
 
