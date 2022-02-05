@@ -61,7 +61,8 @@ namespace BasicWebServer.Server.HTTP
                 Cookies = cookies,
                 Body = body,
                 Session = session,
-                Form = form
+                Form = form, 
+                Query = query
             };
         }
 
@@ -89,6 +90,8 @@ namespace BasicWebServer.Server.HTTP
                     }
                 }
             }
+
+            return (url, query);
         }
 
         private static Session GetSession(CookieCollection cookies)
