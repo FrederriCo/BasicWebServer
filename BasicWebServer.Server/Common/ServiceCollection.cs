@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BasicWebServer.Server.Common
 {
@@ -37,11 +38,21 @@ namespace BasicWebServer.Server.Common
                 throw new InvalidOperationException($"Service {serviceType.FullName} is not registred");
             }
 
-            var constrconstructors = serviceType.GetConstructors();
+            var constructors = serviceType.GetConstructors();
 
-            if (constrconstructors.Length > 1)
+            if (constructors.Length > 1)
             {
                 throw new InvalidOperationException("Multiple constructors are not supported");
+            }
+
+            var constructor = constructors.First();
+            var parametars = constructor.GetParameters();
+            var parametarValues = new object[parametars.Length];
+
+            for (int i = 0; i < parametarValues.Length; i++)
+            {
+                var parametarType = parametars[i].ParameterType;
+                var parametarValue = CreateInstance(parametarType);
             }
            
         }
