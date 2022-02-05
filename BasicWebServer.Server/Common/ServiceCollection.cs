@@ -16,7 +16,9 @@ namespace BasicWebServer.Server.Common
             where TService : class
             where TImplementation : TService
         {
-            throw new NotImplementedException();
+            services[typeof(TService)] = typeof(TImplementation);
+
+            return this;
         }
 
         public IServiceCollection Add<TService>() where TService : class
