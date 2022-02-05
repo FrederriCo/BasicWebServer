@@ -31,42 +31,7 @@ namespace BasicWebServer
            .MapPost<UsersController>("/Login", u => u.LogInUser())
            .MapGet<UsersController>("/Logout", u => u.Logout())
            .MapGet<UsersController>("/UserProfile", u => u.GetUserData()))
-
            .Start();
-        }
-
-       
-        private static void DisplaySessionInfoAction(Request request, Response response)
-        {
-            var sessionExists = request.Session.ContainsKey(Session.SessionCurrentDateKey);
-
-            var bodyText = "";
-
-            if (sessionExists)
-            {
-                var curnetDate = request.Session[Session.SessionCurrentDateKey];
-                bodyText = $"Stored date: {curnetDate}!";
-            }
-            else
-            {
-                bodyText = "Current date stored;";
-            }
-
-            response.Body = "";
-            response.Body += bodyText;
-
-        }
-
-            
-        private static void AddFormDataAction(Request request, Response response)
-        {
-            response.Body = "";
-
-            foreach (var (key, value) in request.Form)
-            {
-                response.Body += $"{key} - {value}";
-                response.Body += Environment.NewLine;
-            }
-        }
+        }    
     }
 }

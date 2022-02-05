@@ -1,7 +1,10 @@
-﻿using BasicWebServer.Server.Controllers;
+﻿using BasicWebServer.Server.Attributies;
+using BasicWebServer.Server.Controllers;
 using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.HTTP.Response;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace BasicWebServer.Server.Routing
@@ -26,6 +29,51 @@ namespace BasicWebServer.Server.Routing
             .MapPost(path, 
                 request 
                 => controllerFunction(CreateController<TController>(request)));
+
+        public static IRoutingTable MapControllers(this IRoutingTable routingTable)
+        {
+            IEnumerable<MethodInfo> controllerActions = GetControllerActions();
+
+            foreach (var controlerAction in controllerActions)
+            {
+                string controllerName = controlerAction
+                    .DeclaringType
+                    .Name
+                    .Replace(nameof(Controller), string.Empty);
+
+                string actionName = controlerAction.Name;
+                string path = $"{controllerName}/{actionName}";
+
+                var responseFunction = GetResponseFunction(controlerAction);
+
+                Method httpMethod = Method.Get;
+                var actionMethodAttribute = controlerAction
+                    .GetCustomAttribute<HttpMethodAttribute>();
+
+                if (actionMethodAttribute != null)
+                {
+                    httpMethod = actionMethodAttribute.HttpMethod;
+                }
+
+                routingTable.Map(httpMethod, path, responseFunction);
+            }
+
+            return routingTable;
+        }
+
+        private static IEnumerable<MethodInfo> GetControllerActions()
+             => Assembly
+            .GetEntryAssembly()
+            .GetExportedTypes()
+            .Where(t => t.IsAbstract == false)
+            .Where(t => t.IsAssignableTo(typeof(Controller)))
+            .Where(t => t.Name.EndsWith(nameof(Controller)))
+            .SelectMany(t => t
+                 .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                 .Where(m => m.ReturnType.IsAssignableTo(typeof(Response))))
+            .ToList();
+            
+            
 
         private static TController CreateController<TController>(Request request)
             => (TController)Activator

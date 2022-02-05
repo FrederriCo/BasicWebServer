@@ -1,4 +1,5 @@
 ﻿using BasicWebServer.Models;
+using BasicWebServer.Server.Attributies;
 using BasicWebServer.Server.Controllers;
 using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.HTTP.Response;
@@ -21,6 +22,8 @@ namespace BasicWebServer.Controllers
         {
 
         }
+
+        [HttpGet]
         public Response Index() => Text("Hello from server!");
 
         public Response Html() => View();
@@ -33,6 +36,7 @@ namespace BasicWebServer.Controllers
 
         public Response Login() => View();
 
+        [HttpPost]
         public Response HtmlFormPost()
         {
             var name = Request.Form["Name"];
