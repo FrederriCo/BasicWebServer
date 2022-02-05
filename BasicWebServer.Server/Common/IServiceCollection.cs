@@ -1,4 +1,6 @@
-﻿namespace BasicWebServer.Server.Common
+﻿using System;
+
+namespace BasicWebServer.Server.Common
 {
     public interface IServiceCollection
     {
@@ -11,5 +13,7 @@
 
         TService Get<TService>()
             where TService : class;
+
+        object CreateInstance(Type serviceType);
     }
 }
