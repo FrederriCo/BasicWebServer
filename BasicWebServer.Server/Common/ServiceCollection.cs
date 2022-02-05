@@ -23,17 +23,32 @@ namespace BasicWebServer.Server.Common
 
         public IServiceCollection Add<TService>() where TService : class
         {
-            throw new NotImplementedException();
+            return Add<TService, TService>();
         }
 
         public object CreateInstance(Type serviceType)
         {
-            throw new NotImplementedException();
+            if (services.ContainsKey(serviceType))
+            {
+                serviceType = services[serviceType];
+            }
+            else if (serviceType.IsInterface)
+            {
+                throw new InvalidOperationException($"Service {serviceType.FullName} is not registred");
+            }
+
+            var constrconstructors = serviceType.GetConstructors();
+
+            if (constrconstructors.Length > 1)
+            {
+                throw new InvalidOperationException("Multiple constructors are not supported");
+            }
+           
         }
 
         public TService Get<TService>() where TService : class
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
