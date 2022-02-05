@@ -18,7 +18,7 @@ namespace BasicWebServer.Server
 
         private readonly RoutingTable routingTable;
 
-        public readonly IServiceCollection serviceCollection;
+        public readonly IServiceCollection ServiceCollection;
 
         public HttpServer(string ipAddress, int port, Action<IRoutingTable> routingTableConfiguration)
         {
@@ -29,7 +29,7 @@ namespace BasicWebServer.Server
 
             routingTableConfiguration(this.routingTable = new RoutingTable());
 
-            serviceCollection = new ServiceCollection();
+            ServiceCollection = new ServiceCollection();
 
         }
 
@@ -65,7 +65,7 @@ namespace BasicWebServer.Server
 
                     Console.WriteLine(requestText);
 
-                    var request = Request.Parse(requestText);
+                    var request = Request.Parse(requestText, ServiceCollection);
 
                     var response = this.routingTable.MatchRequest(request);
 
