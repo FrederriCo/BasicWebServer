@@ -1,4 +1,5 @@
 ﻿
+using BasicWebServer.Server.Common;
 using BasicWebServer.Server.HTTP.Response;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,8 @@ namespace BasicWebServer.Server.HTTP
         public Session Session { get; private set; }
 
         public IReadOnlyDictionary<string, string> Form { get; private set; }
+
+        public IServiceCollection serviceCollection { get; private set; }
 
         public static Request Parse(string request)
         {

@@ -18,10 +18,7 @@ namespace BasicWebServer
     {
         public static async Task Main()
         {
-            //await DownloadSitesAsTextFile(StartUp.FileName,
-            //    new string[] { "https://www.yahoo.com", "https://www.dir.bg" });
-
-            var server = new HttpServer(routes => routes
+            await new HttpServer(routes => routes
            .MapGet<HomeController>("/", c => c.Index())
            .MapGet<HomeController>("/Redirect", c => c.Redirect())
            .MapGet<HomeController>("/Html", c => c.Html())
@@ -33,9 +30,9 @@ namespace BasicWebServer
            .MapGet<UsersController>("/Login", u => u.Login())
            .MapPost<UsersController>("/Login", u => u.LogInUser())
            .MapGet<UsersController>("/Logout", u => u.Logout())
-           .MapGet<UsersController>("/UserProfile", u => u.GetUserData()));
+           .MapGet<UsersController>("/UserProfile", u => u.GetUserData()))
 
-            await server.Start();
+           .Start();
         }
 
        
