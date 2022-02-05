@@ -63,7 +63,16 @@ namespace BasicWebServer.Server.Common
 
         public TService Get<TService>() where TService : class
         {
-            
+            var serviceType = typeof(TService);
+
+            if (!services.ContainsKey(serviceType))
+            {
+                return null;
+            }
+
+            var service = services[serviceType];
+
+            return (TService)CreateInstance(service);
         }
     }
 }
