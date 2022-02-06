@@ -67,8 +67,9 @@ namespace BasicWebServer.Server.Routing
             return request =>
             {
                 var controllerInstance = CreateController(controlerAction.DeclaringType, request);
+                var parameterValues = GetParameterValues(controlerAction, request);
 
-
+                return (Response)controlerAction.Invoke(controllerInstance, parameterValues);
             };
           
         }
