@@ -62,16 +62,26 @@ namespace BasicWebServer.Server.Routing
             return routingTable;
         }
 
-        private static Func<Request, Response> GetResponseFunction(MethodInfo controlerAction)
+        private static Func<Request, Response> GetResponseFunction(MethodInfo controllerAction)
         {
             return request =>
             {
-                var controllerInstance = CreateController(controlerAction.DeclaringType, request);
-                var parameterValues = GetParameterValues(controlerAction, request);
+                var controllerInstance = CreateController(controllerAction.DeclaringType, request);
+                var parameterValues = GetParameterValues(controllerAction, request);
 
-                return (Response)controlerAction.Invoke(controllerInstance, parameterValues);
+                return (Response)controllerAction.Invoke(controllerInstance, parameterValues);
             };
           
+        }
+
+        private static object[] GetParameterValues(MethodInfo controllerAction, Request request)
+        {
+            var actionParamaters = controllerAction
+                    .GetParameters()
+                    .Select(p => new
+                    {
+                        
+                    });
         }
 
         private static IEnumerable<MethodInfo> GetControllerActions()
