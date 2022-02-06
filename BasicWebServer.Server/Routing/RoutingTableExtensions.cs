@@ -80,8 +80,11 @@ namespace BasicWebServer.Server.Routing
                     .GetParameters()
                     .Select(p => new
                     {
-                        
+                        p.Name,
+                        p.ParameterType
                     });
+
+
         }
 
         private static IEnumerable<MethodInfo> GetControllerActions()
