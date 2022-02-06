@@ -82,9 +82,15 @@ namespace BasicWebServer.Server.Routing
                     {
                         p.Name,
                         p.ParameterType
-                    });
+                    })
+                    .ToArray();
 
             var parameterValue = new object[actionParamaters.Count()];
+
+            for (int i = 0; i < actionParamaters.Length; i++)
+            {
+
+            }
         }
 
         private static IEnumerable<MethodInfo> GetControllerActions()
