@@ -25,8 +25,9 @@ namespace BasicWebServer.Server.Routing
             string path,
             Func<TController, Response> controllerFunction)
             where TController : Controller
-            => routingTable
-            .MapPost(path, 
+            => routingTable.Map(
+            Method.Post,
+                path, 
                 request 
                 => controllerFunction(CreateController<TController>(request)));
 
@@ -65,8 +66,11 @@ namespace BasicWebServer.Server.Routing
         {
             return request =>
             {
-                var controllerInstance =
+                var controllerInstance = CreateController(controlerAction.DeclaringType, request);
+
+
             };
+          
         }
 
         private static IEnumerable<MethodInfo> GetControllerActions()
