@@ -94,15 +94,20 @@ namespace BasicWebServer.Server.Routing
                 if (parameter.ParameterType.IsPrimitive
                     || parameter.ParameterType == typeof(string))
                 {
-                    var parameterValue = request.GetValue(parameter.Name);
+                    string parameterValue = request.GetValue(parameter.Name);
                     parameterValues[i] = Convert.ChangeType(parameterValue, parameter.ParameterType);
                 }
                 else
                 {
-
+                    var parameterValue = Activator.CreateInstance(parameter.ParameterType);
+                    var parameterProperties = parameter.ParameterType.GetProperties();
                 }
             }
         }
+
+        private static string GetValue(this Request request, string name)
+            => request.Query.GetValueOrDefault(name) ??
+               request.Form.GetValueOrDefault(name);
 
         private static IEnumerable<MethodInfo> GetControllerActions()
              => Assembly
