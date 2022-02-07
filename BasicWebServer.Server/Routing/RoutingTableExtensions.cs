@@ -85,11 +85,21 @@ namespace BasicWebServer.Server.Routing
                     })
                     .ToArray();
 
-            var parameterValue = new object[actionParamaters.Count()];
+            var parameterValues = new object[actionParamaters.Count()];
 
             for (int i = 0; i < actionParamaters.Length; i++)
             {
+                var parameter = actionParamaters[i];
 
+                if (parameter.ParameterType.IsPrimitive
+                    || parameter.ParameterType == typeof(string))
+                {
+                    var parameterValue = request.GetValue(parameter.Name);
+                }
+                else
+                {
+
+                }
             }
         }
 
