@@ -133,6 +133,10 @@ namespace BasicWebServer.Server.HTTP
             return cookieCollection;
         }
 
+        private static string GetValue(this Request request, string name)
+             => request.Query.GetValueOrDefault(name) ??
+                request.Form.GetValueOrDefault(name) ;
+
         private static Dictionary<string, string> ParseForm(HeaderCollection headers, string body)
         {
             var formCollection = new Dictionary<string, string>();

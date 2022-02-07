@@ -95,6 +95,7 @@ namespace BasicWebServer.Server.Routing
                     || parameter.ParameterType == typeof(string))
                 {
                     var parameterValue = request.GetValue(parameter.Name);
+                    parameterValues[i] = Convert.ChangeType(parameterValue, parameter.ParameterType);
                 }
                 else
                 {
