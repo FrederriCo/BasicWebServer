@@ -61,6 +61,14 @@ namespace BasicWebServer.Server.Routing
             return routingTable;
         }
 
+        private static Func<Request, Response> GetResponseFunction(MethodInfo controlerAction)
+        {
+            return request =>
+            {
+                var controllerInstance =
+            };
+        }
+
         private static IEnumerable<MethodInfo> GetControllerActions()
              => Assembly
             .GetEntryAssembly()
