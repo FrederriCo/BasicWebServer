@@ -61,7 +61,7 @@ namespace BasicWebServer.Server.HTTP
                 Cookies = cookies,
                 Body = body,
                 Session = session,
-                Form = form, 
+                Form = form,
                 Query = query
             };
         }
@@ -72,17 +72,13 @@ namespace BasicWebServer.Server.HTTP
             Dictionary<string, string> query = new Dictionary<string, string>();
             var parts = queryString.Split("?", 2);
 
-            if (parts.Length  == 1)
-            {
-                url = parts[0];
-            }
-            else
+            if (parts.Length > 1)
             {
                 var queryParams = parts[1].Split("&");
 
                 foreach (var pair in queryParams)
                 {
-                    var param = pair.Split("=");
+                    var param = pair.Split('=');
 
                     if (param.Length == 2)
                     {
@@ -91,6 +87,7 @@ namespace BasicWebServer.Server.HTTP
                 }
             }
 
+            url = parts[0];
             return (url, query);
         }
 
@@ -133,7 +130,7 @@ namespace BasicWebServer.Server.HTTP
             return cookieCollection;
         }
 
-        
+
         private static Dictionary<string, string> ParseForm(HeaderCollection headers, string body)
         {
             var formCollection = new Dictionary<string, string>();
@@ -203,4 +200,3 @@ namespace BasicWebServer.Server.HTTP
         }
     }
 }
-    
