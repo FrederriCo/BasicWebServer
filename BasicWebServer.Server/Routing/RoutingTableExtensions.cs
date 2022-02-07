@@ -101,6 +101,15 @@ namespace BasicWebServer.Server.Routing
                 {
                     var parameterValue = Activator.CreateInstance(parameter.ParameterType);
                     var parameterProperties = parameter.ParameterType.GetProperties();
+
+                    foreach (var property in parameterProperties)
+                    {
+                        var propertyValue = request.GetValue(property.Name);
+                        property.SetValue(
+                            parameterValue, 
+                            Convert.ChangeType(propertyValue, property.PropertyType));
+
+                    }
                 }
             }
         }
