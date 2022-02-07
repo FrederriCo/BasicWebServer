@@ -8,13 +8,13 @@ namespace BasicWebServer.Server.Controllers
 {
     public abstract class Controller
     {
+        protected Request Request { get; set; }
 
         protected Controller(Request request)
         {
             this.Request = request;
         }
 
-        protected Request Request { get; private init; }
         protected Response Text(string text) => new TextResponse(text);
         protected Response Html(string text) => new HtmlResponse(text);
         protected Response Badrequest() => new BadRequestResponse();

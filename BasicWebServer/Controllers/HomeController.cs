@@ -26,6 +26,8 @@ namespace BasicWebServer.Controllers
         [HttpGet]
         public Response Index() => Text("Hello from server!");
 
+        public Response Student(string name, int age) => Text($"I`m {name} and I`m {age} years old");
+
         public Response Html() => View();
 
         public Response Redirect() => Redirect("https://softuni.bg");
