@@ -110,8 +110,12 @@ namespace BasicWebServer.Server.Routing
                             Convert.ChangeType(propertyValue, property.PropertyType));
 
                     }
+
+                    parameterValues[i] = parameterValue;
                 }
             }
+
+            return parameterValues;
         }
 
         private static string GetValue(this Request request, string name)
