@@ -127,7 +127,7 @@ namespace BasicWebServer.Server
             {
                 resposeBytes = resposeBytes
                     .Concat(response.FileContent)
-                    .ToArray();
+                    .ToArray(); 
             }
 
             await networkStream.WriteAsync(resposeBytes);

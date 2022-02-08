@@ -1,20 +1,21 @@
 ﻿using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.HTTP.Response;
-using System.Runtime.CompilerServices;
-using BasicWebServer.Viwes;
 using BasicWebServer.Server.Identity;
+
+using BasicWebServer.Viwes;
+using System.Runtime.CompilerServices;
 
 namespace BasicWebServer.Server.Controllers
 {
-    public abstract class Controller
+    public class Controller
     {
         protected Request Request { get; set; }
 
         private UserIdentity userIdentity;
 
-        protected Controller(Request request)
+        public Controller(Request request)
         {
-            this.Request = request;
+            Request = request;
         }
 
         protected UserIdentity User
@@ -61,20 +62,18 @@ namespace BasicWebServer.Server.Controllers
             return response;
         }
 
-        protected Response Badrequest() => new BadRequestResponse();
+        protected Response BadRequest() => new BadRequestResponse();
         protected Response Unauthorized() => new UnauthorizedResponse();
         protected Response NotFound() => new NotFoundResponse();
         protected Response Redirect(string location) => new RedirectResponse(location);
-        protected Response File(string fileName) => new TextFileResponse(fileName);
-   
+       // protected Response File(string fileName) => new FileResponse(fileName);
         protected Response View([CallerMemberName] string viewName = "")
             => new ViewResponse(viewName, GetControllerName());
-
         protected Response View(object model, [CallerMemberName] string viewName = "")
             => new ViewResponse(viewName, GetControllerName(), model);
-        
-        private string GetControllerName()
-            => this.GetType().Name.Replace(nameof(Controller), string.Empty);
 
+        private string GetControllerName()
+            => this.GetType().Name
+                .Replace(nameof(Controller), string.Empty);
     }
 }

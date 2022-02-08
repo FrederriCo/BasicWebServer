@@ -17,6 +17,8 @@ namespace BasicWebServer.Controllers
         private const string Username = "user";
         private const string Password = "user123";
 
+       // private readonly UserService userService;
+
         public UsersController(Request request)
             : base(request)
         {
