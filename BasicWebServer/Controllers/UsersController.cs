@@ -1,4 +1,5 @@
 ﻿
+using BasicWebServer.Server.Attributies;
 using BasicWebServer.Server.Controllers;
 using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.HTTP.Response;
@@ -23,6 +24,7 @@ namespace BasicWebServer.Controllers
 
         public Response Login() => View();
 
+        [HttpPost]
         public Response LogInUser()
         {
             Request.Session.Clear();
@@ -54,8 +56,9 @@ namespace BasicWebServer.Controllers
             return Html("<h3>Logged out successfully!</h3>");
         }
 
+        [Authorize]
         public Response GetUserData()
-            {
+        {
             if (this.Request.Session.ContainsKey(Session.SessionUserKey))
             {
                

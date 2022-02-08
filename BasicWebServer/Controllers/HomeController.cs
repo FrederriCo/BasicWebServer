@@ -34,7 +34,7 @@ namespace BasicWebServer.Controllers
 
         public Response Content() => View();
 
-        // public Response Html() => Html(HomeController.HtmlForm);
+        //public Response Html() => Html(HomeController.HtmlForm);
 
         public Response Login() => View();
 
@@ -115,17 +115,22 @@ namespace BasicWebServer.Controllers
 
         public Response Session()
         {
-            string currentDateKey = "CurrentDate";
-            var sessionExists = Request.Session.ContainsKey(currentDateKey);
+            var sessionExists = Request.Session
+                .ContainsKey(Server.HTTP.Session.SessionCurrentDateKey);
+
+            var bodyText = "";
 
             if (sessionExists)
             {
-                var curnetDate = Request.Session[currentDateKey];
-
-                return Text($"Stored date: {curnetDate}!");
+                var currentDate = Request.Session[Server.HTTP.Session.SessionCurrentDateKey];
+                bodyText = $"Stored date: {currentDate}!";
+            }
+            else
+            {
+                bodyText = "Current date stored!";
             }
 
-            return Text("Current date stored!");
+            return Text(bodyText);
 
         }
 

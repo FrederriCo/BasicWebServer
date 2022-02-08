@@ -15,7 +15,8 @@ namespace BasicWebServer.Server.Routing
             this IRoutingTable routingTable,
             string path,
             Func<TController, Response> controllerFunction) where TController : Controller
-            => routingTable.MapGet(
+            => routingTable.Map(
+                Method.Get,
                 path, 
                 request
                 => controllerFunction(CreateController<TController>(request)));
@@ -33,22 +34,22 @@ namespace BasicWebServer.Server.Routing
 
         public static IRoutingTable MapControllers(this IRoutingTable routingTable)
         {
-            IEnumerable<MethodInfo> controllerActions = GetControllerActions();
+             IEnumerable<MethodInfo> controllerActions = GetControllerActions();
 
-            foreach (var controlerAction in controllerActions)
+            foreach (var controllerAction in controllerActions)
             {
-                string controllerName = controlerAction
+                string controllerName = controllerAction
                     .DeclaringType
                     .Name
                     .Replace(nameof(Controller), string.Empty);
 
-                string actionName = controlerAction.Name;
+                string actionName = controllerAction.Name;
                 string path = $"{controllerName}/{actionName}";
 
-                var responseFunction = GetResponseFunction(controlerAction);
+                var responseFunction = GetResponseFunction(controllerAction);
 
                 Method httpMethod = Method.Get;
-                var actionMethodAttribute = controlerAction
+                var actionMethodAttribute = controllerAction
                     .GetCustomAttribute<HttpMethodAttribute>();
 
                 if (actionMethodAttribute != null)
@@ -57,6 +58,13 @@ namespace BasicWebServer.Server.Routing
                 }
 
                 routingTable.Map(httpMethod, path, responseFunction);
+
+                MapDefaultRoutes(
+                    routingTable,
+                    httpMethod,
+                    controllerName,
+                    actionName,
+                    responseFunction);
             }
 
             return routingTable;
@@ -66,12 +74,61 @@ namespace BasicWebServer.Server.Routing
         {
             return request =>
             {
+                if (!UserIsAuthorized(controllerAction, request.Session))
+                {
+                    return new Response(StatusCode.Unauthorized);
+                }
+
                 var controllerInstance = CreateController(controllerAction.DeclaringType, request);
                 var parameterValues = GetParameterValues(controllerAction, request);
 
                 return (Response)controllerAction.Invoke(controllerInstance, parameterValues);
             };
           
+        }
+        private static void MapDefaultRoutes(
+           IRoutingTable routingTable,
+           Method httpMethod,
+           string controllerName,
+           string actionName,
+           Func<Request, Response> responseFunction)
+        {
+            const string defaultActionName = "Index";
+            const string defaultControllerName = "Home";
+
+            if (actionName == defaultActionName)
+            {
+                routingTable.Map(httpMethod, $"/{controllerName}", responseFunction);
+
+                if (controllerName == defaultControllerName)
+                {
+                    routingTable.Map(httpMethod, "/", responseFunction);
+                }
+            }
+        }
+
+        private static bool UserIsAuthorized(
+            MethodInfo controllerAction,
+            Session session)
+        {
+            var authorizationRequired = controllerAction
+                .DeclaringType
+                .GetCustomAttribute<AuthorizeAttribute>()
+                ?? controllerAction
+                .GetCustomAttribute<AuthorizeAttribute>();
+
+            if (authorizationRequired != null)
+            {
+                var userIsAuthorized = session.ContainsKey(Session.SessionUserKey)
+                    && session[Session.SessionUserKey] != null;
+
+                if (!userIsAuthorized)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static object[] GetParameterValues(MethodInfo controllerAction, Request request)

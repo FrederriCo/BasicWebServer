@@ -130,7 +130,6 @@ namespace BasicWebServer.Server.HTTP
             return cookieCollection;
         }
 
-
         private static Dictionary<string, string> ParseForm(HeaderCollection headers, string body)
         {
             var formCollection = new Dictionary<string, string>();

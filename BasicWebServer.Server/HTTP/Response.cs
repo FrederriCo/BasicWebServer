@@ -22,7 +22,8 @@ namespace BasicWebServer.Server.HTTP.Response
 
         public string Body { get; set; }
 
-       
+        public byte[] FileContent { get; set; }
+
         public override string ToString()
         {
             var result = new StringBuilder();

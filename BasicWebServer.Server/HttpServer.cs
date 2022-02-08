@@ -1,12 +1,13 @@
-﻿using BasicWebServer.Server.Common;
-using BasicWebServer.Server.HTTP;
-using BasicWebServer.Server.HTTP.Response;
-using BasicWebServer.Server.Routing;
-using System;
+﻿using System;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
+using System.Net.Sockets;
 using System.Threading.Tasks;
+using BasicWebServer.Server.HTTP;
+using BasicWebServer.Server.Routing;
+using System.Linq;
+using BasicWebServer.Server.Common;
+using BasicWebServer.Server.HTTP.Response;
 
 namespace BasicWebServer.Server
 {
@@ -41,9 +42,7 @@ namespace BasicWebServer.Server
         public HttpServer(Action<IRoutingTable> routingTable)
             : this(8080, routingTable)
         {
-        }
-
-       
+        }       
 
         public async Task Start()
         {
@@ -122,11 +121,16 @@ namespace BasicWebServer.Server
 
         private async Task WriteResponse(NetworkStream networkStream, Response response)
         {
-            var responseByte = Encoding.UTF8.GetBytes(response.ToString());
+            var resposeBytes = Encoding.UTF8.GetBytes(response.ToString());
+            
+            if (response.FileContent != null)
+            {
+                resposeBytes = resposeBytes
+                    .Concat(response.FileContent)
+                    .ToArray();
+            }
 
-           
-
-            await networkStream.WriteAsync(responseByte);
+            await networkStream.WriteAsync(resposeBytes);
         }
     }
 }
