@@ -44,7 +44,7 @@ namespace BasicWebServer.Server.Routing
                     .Replace(nameof(Controller), string.Empty);
 
                 string actionName = controllerAction.Name;
-                string path = $"{controllerName}/{actionName}";
+                string path = $"/{controllerName}/{actionName}";
 
                 var responseFunction = GetResponseFunction(controllerAction);
 
