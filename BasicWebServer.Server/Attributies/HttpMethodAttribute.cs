@@ -1,7 +1,7 @@
 ﻿using BasicWebServer.Server.HTTP;
 using System;
 
-namespace BasicWebServer.Server.Attributies
+namespace BasicWebServer.Server.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     public abstract class HttpMethodAttribute : Attribute
@@ -9,7 +9,6 @@ namespace BasicWebServer.Server.Attributies
         public Method HttpMethod { get; }
 
         protected HttpMethodAttribute(Method httpMethod)
-             => HttpMethod = httpMethod;
-        
+            => HttpMethod = httpMethod;
     }
 }

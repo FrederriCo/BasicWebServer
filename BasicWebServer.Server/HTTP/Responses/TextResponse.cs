@@ -1,12 +1,10 @@
-﻿
-using System;
+﻿using BasicWebServer.Server.HTTP;
 
-
-namespace BasicWebServer.Server.HTTP.Response
+namespace BasicWebServer.Server.Responses
 {
     public class TextResponse : ContentResponse
     {
-        public TextResponse(string text)            
+        public TextResponse(string text)
             : base(text, ContentType.PlainText)
         {
         }

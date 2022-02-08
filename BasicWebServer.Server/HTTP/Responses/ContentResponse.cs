@@ -1,23 +1,20 @@
-﻿
-using BasicWebServer.Server.Common;
-using System;
+﻿using BasicWebServer.Server.Common;
+using BasicWebServer.Server.HTTP;
 using System.Text;
 
-namespace BasicWebServer.Server.HTTP.Response
+namespace BasicWebServer.Server.Responses
 {
     public class ContentResponse : Response
     {
         public ContentResponse(string content, string contentType)
-            
-            : base(StatusCode.OK)
+             : base(StatusCode.OK)
         {
             Guard.AgainstNull(content);
             Guard.AgainstNull(contentType);
 
             this.Headers.Add(Header.ContentType, contentType);
 
-            this.Body = content;      
-
+            this.Body = content;
         }
 
         public override string ToString()
@@ -31,5 +28,4 @@ namespace BasicWebServer.Server.HTTP.Response
             return base.ToString();
         }
     }
-    
 }

@@ -7,7 +7,6 @@ using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.Routing;
 using System.Linq;
 using BasicWebServer.Server.Common;
-using BasicWebServer.Server.HTTP.Response;
 
 namespace BasicWebServer.Server
 {
@@ -15,23 +14,21 @@ namespace BasicWebServer.Server
     {
         private readonly IPAddress ipAddress;
         private readonly int port;
-        private readonly TcpListener serverListener;        
+        private readonly TcpListener serverListener;
 
         private readonly RoutingTable routingTable;
 
-        public readonly IServiceCollection ServiceCollection;
+        public readonly IServiceCollection ServiceCollection; 
 
         public HttpServer(string ipAddress, int port, Action<IRoutingTable> routingTableConfiguration)
         {
             this.ipAddress = IPAddress.Parse(ipAddress);
             this.port = port;
 
-            serverListener = new TcpListener(this.ipAddress, port);
+            this.serverListener = new TcpListener(this.ipAddress, port);
 
             routingTableConfiguration(this.routingTable = new RoutingTable());
-
             ServiceCollection = new ServiceCollection();
-
         }
 
         public HttpServer(int port, Action<IRoutingTable> routingTable)
@@ -42,14 +39,14 @@ namespace BasicWebServer.Server
         public HttpServer(Action<IRoutingTable> routingTable)
             : this(8080, routingTable)
         {
-        }       
+        }
 
         public async Task Start()
         {
             this.serverListener.Start();
 
-            Console.WriteLine($"Server started on port {port}...");
-            Console.WriteLine("Listening for request.....");
+            Console.WriteLine($"Server started on port {port}.");
+            Console.WriteLine("Listening for requests...");
 
             while (true)
             {
@@ -57,7 +54,6 @@ namespace BasicWebServer.Server
 
                 _ = Task.Run(async () =>
                 {
-
                     var networkStream = connection.GetStream();
 
                     var requestText = await this.ReadRequest(networkStream);
@@ -68,27 +64,12 @@ namespace BasicWebServer.Server
 
                     var response = this.routingTable.MatchRequest(request);
 
-
                     AddSession(request, response);
 
                     await WriteResponse(networkStream, response);
 
                     connection.Close();
                 });
-            }
-        }
-
-        private static void AddSession(Request request, Response response)
-        {
-            var sessionExists = request.Session
-                .ContainsKey(Session.SessionCurrentDateKey);
-
-            if (!sessionExists)
-            {
-                request.Session[Session.SessionCurrentDateKey] =
-                    DateTime.Now.ToString();
-                response.Cookies
-                    .Add(Session.SessionCookieName, request.Session.Id);
             }
         }
 
@@ -114,7 +95,7 @@ namespace BasicWebServer.Server
 
                 requestBuilder.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
             }
-            while (networkStream.DataAvailable);
+            while (networkStream.DataAvailable); // May not run correctly over the Internet
 
             return requestBuilder.ToString();
         }
@@ -122,15 +103,26 @@ namespace BasicWebServer.Server
         private async Task WriteResponse(NetworkStream networkStream, Response response)
         {
             var resposeBytes = Encoding.UTF8.GetBytes(response.ToString());
-            
+
             if (response.FileContent != null)
             {
                 resposeBytes = resposeBytes
                     .Concat(response.FileContent)
-                    .ToArray(); 
+                    .ToArray();
             }
 
             await networkStream.WriteAsync(resposeBytes);
+        }
+
+        private static void AddSession(Request request, Response response)
+        {
+            var sessionExists = request.Session.ContainsKey(Session.SessionCurrentDateKey);
+
+            if (!sessionExists)
+            {
+                request.Session[Session.SessionCurrentDateKey] = DateTime.Now.ToString();
+                response.Cookies.Add(Session.SessionCookieName, request.Session.Id);
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿
-using BasicWebServer.Server.Common;
+﻿using BasicWebServer.Server.Common;
 
-namespace BasicWebServer.Server.HTTP.Response
+namespace BasicWebServer.Server.HTTP
 {
     public class Header
     {
@@ -24,11 +23,10 @@ namespace BasicWebServer.Server.HTTP.Response
         }
 
         public string Name { get; init; }
-        public string Value { get; init; }
+
+        public string Value { get; set; }
 
         public override string ToString()
-        {
-            return $"{this.Name}: {this.Value}";
-        }
+            => $"{this.Name}: {this.Value}";
     }
 }

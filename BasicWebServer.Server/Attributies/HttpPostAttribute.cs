@@ -1,12 +1,10 @@
-﻿
-using BasicWebServer.Server.HTTP;
+﻿using BasicWebServer.Server.HTTP;
 
-namespace BasicWebServer.Server.Attributies
+namespace BasicWebServer.Server.Attributes
 {
     public class HttpPostAttribute : HttpMethodAttribute
     {
-        public HttpPostAttribute()
-            : base(Method.Post)
+        public HttpPostAttribute() : base(Method.Post)
         {
         }
     }

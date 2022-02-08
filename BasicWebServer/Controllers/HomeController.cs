@@ -1,80 +1,114 @@
-﻿using BasicWebServer.Server.HTTP;
-using BasicWebServer.Server.HTTP.Response;
-using System.Runtime.CompilerServices;
-using BasicWebServer.Viwes;
-using BasicWebServer.Server.Identity;
+﻿using BasicWebServer.Models;
+using BasicWebServer.Server.Attributes;
+using BasicWebServer.Server.Attributies;
+using BasicWebServer.Server.Controllers;
+using BasicWebServer.Server.HTTP;
+using System.Linq;
+using System.Text;
+using System.Web;
 
-namespace BasicWebServer.Server.Controllers
+namespace BasicWebServer.Demo.Controllers
 {
-    public abstract class Controller
+    public class HomeController : Controller
     {
-        protected Request Request { get; set; }
+        private const string FileName = "content.txt";
 
-        private UserIdentity userIdentity;
-
-        public Controller(Request request)
+        public HomeController(Request request)
+            : base(request)
         {
-            this.Request = request;
+
         }
 
-        protected UserIdentity User
+        [HttpGet]
+        public Response Index() => Text("Hello from the server!");
+
+        public Response Student(string name, int age) => Text($"I'm {name} and I'm {age} years old");
+
+        public Response Redirect() => Redirect("https://softuni.bg");
+
+        public Response Html() => View();
+
+        [HttpPost]
+        public Response HtmlFormPost()
         {
-            get
+            string name = Request.Form["Name"];
+            string age = Request.Form["Age"];
+
+            var model = new FormViewModel()
             {
-                if (this.userIdentity == null)
-                {
-                    this.userIdentity = this.Request.Session.ContainsKey(Session.SessionUserKey)
-                        ? new UserIdentity { Id = this.Request.Session[Session.SessionUserKey] }
-                        : new();
-                }
+                Name = name,
+                Age = int.Parse(age)
+            };
 
-                return this.userIdentity;
-            }
+            return View(model);
         }
 
-        protected void SignIn(string userId)
-        {
-            this.Request.Session[Session.SessionUserKey] = userId;
-            this.userIdentity = new UserIdentity { Id = userId };
-        }
+       // public Response DownloadContent() => File(FileName);
 
-        protected void SignOut()
+        public Response Cookies()
         {
-            this.Request.Session.Clear();
-            this.userIdentity = new();
-        }
+            var requestHasCookies = Request.Cookies.Any(c => c.Name != Server.HTTP.Session.SessionCookieName);
+            var bodyText = "";
 
-        protected Response Text(string text) => new TextResponse(text);
-        protected Response Html(string text) => new HtmlResponse(text);
-        protected Response Html(string html, CookieCollection cookies)
-        {
-            var response = new HtmlResponse(html);
-
-            if (cookies != null)
+            if (requestHasCookies)
             {
-                foreach (var cookie in cookies)
+                var cookieText = new StringBuilder();
+                cookieText.AppendLine("<h1>Cookies</h1>");
+
+                cookieText
+                    .Append("<table border='1'><tr><th>Name</th><th>Value</th></tr>");
+
+                foreach (var cookie in Request.Cookies)
                 {
-                    response.Cookies.Add(cookie.Name, cookie.Value);
+                    cookieText.Append("<tr>");
+                    cookieText
+                        .Append($"<td>{HttpUtility.HtmlEncode(cookie.Name)}</td>");
+                    cookieText
+                        .Append($"<td>{HttpUtility.HtmlEncode(cookie.Value)}</td>");
+                    cookieText.Append("</tr>");
                 }
+                cookieText.Append("</table>");
+
+                bodyText = cookieText.ToString();
+
+                return Html(bodyText);
+            }
+            else
+            {
+                bodyText = "<h1>Cookies set!</h1>";
             }
 
-            return response;
+            var cookies = new CookieCollection();
+
+            if (!requestHasCookies)
+            {
+                cookies.Add("My-Cookie", "My-Value");
+                cookies.Add("My-Second-Cookie", "My-Second-Value");
+            }
+
+            return Html(bodyText, cookies);
         }
 
-        protected Response Badrequest() => new BadRequestResponse();
-        protected Response Unauthorized() => new UnauthorizedResponse();
-        protected Response NotFound() => new NotFoundResponse();
-        protected Response Redirect(string location) => new RedirectResponse(location);
-        protected Response File(string fileName) => new TextFileResponse(fileName);
+        public Response Session()
+        {
+            var sessionExists = Request.Session
+                .ContainsKey(Server.HTTP.Session.SessionCurrentDateKey);
 
-        protected Response View([CallerMemberName] string viewName = "")
-            => new ViewResponse(viewName, GetControllerName());
+            var bodyText = "";
 
-        protected Response View(object model, [CallerMemberName] string viewName = "")
-            => new ViewResponse(viewName, GetControllerName(), model);
+            if (sessionExists)
+            {
+                var currentDate = Request.Session[Server.HTTP.Session.SessionCurrentDateKey];
+                bodyText = $"Stored date: {currentDate}!";
+            }
+            else
+            {
+                bodyText = "Current date stored!";
+            }
 
-        private string GetControllerName()
-            => this.GetType().Name.Replace(nameof(Controller), string.Empty);
+            return Text(bodyText);
+        }
 
+        public Response Content() => View();
     }
 }

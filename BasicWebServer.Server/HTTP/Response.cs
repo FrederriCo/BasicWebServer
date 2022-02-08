@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Text;
 
-
-namespace BasicWebServer.Server.HTTP.Response
+namespace BasicWebServer.Server.HTTP
 {
     public class Response
     {

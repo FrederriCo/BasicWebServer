@@ -1,5 +1,5 @@
-﻿using BasicWebServer.Server.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using BasicWebServer.Server.Common;
 
 namespace BasicWebServer.Server.HTTP
 {
@@ -9,7 +9,7 @@ namespace BasicWebServer.Server.HTTP
 
         public const string SessionCurrentDateKey = "CurrentDate";
 
-        public const string SessionUserKey = "AuthenticateduserId";
+        public const string SessionUserKey = "AuthenticatedUserId";
 
         private Dictionary<string, string> data;
 
@@ -30,9 +30,10 @@ namespace BasicWebServer.Server.HTTP
             set => this.data[key] = value;
         }
 
-        public bool ContainsKey(string key) 
+        public bool ContainsKey(string key)
             => this.data.ContainsKey(key);
 
-        public void Clear() => this.data.Clear(); 
+        public void Clear()
+           => this.data.Clear();
     }
 }

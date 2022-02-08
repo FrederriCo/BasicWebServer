@@ -1,24 +1,26 @@
 ﻿using System.IO;
+using BasicWebServer.Server.HTTP;
 
-namespace BasicWebServer.Server.HTTP.Response
+namespace BasicWebServer.Server.Responses
 {
-    public class TextFileResponse : Response
+    public class FileResponse : Response
     {
-        public TextFileResponse(string fileName) 
-            : base(StatusCode.OK)
+        public string FileName { get; init; }
+
+        public FileResponse(string fileName)
+             : base(StatusCode.OK)
         {
             this.FileName = fileName;
 
-            this.Headers.Add(Header.ContentType, ContentType.PlainText);
+            this.Headers.Add(Header.ContentType, ContentType.FileContent);
         }
-
-        public string FileName { get; init; }
 
         public override string ToString()
         {
             if (File.Exists(this.FileName))
             {
-                this.Body = File.ReadAllTextAsync(this.FileName).Result;
+                this.Body = string.Empty;
+                FileContent = File.ReadAllBytes(this.FileName);
 
                 var fileBytesCount = new FileInfo(this.FileName).Length;
                 this.Headers.Add(Header.ContentLength, fileBytesCount.ToString());

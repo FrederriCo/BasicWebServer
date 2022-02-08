@@ -1,10 +1,8 @@
-﻿
-using BasicWebServer.Server.Common;
-using BasicWebServer.Server.HTTP.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Web;
+using System.Linq;
+using System.Collections.Generic;
+using BasicWebServer.Server.Common;
 
 namespace BasicWebServer.Server.HTTP
 {
@@ -41,7 +39,7 @@ namespace BasicWebServer.Server.HTTP
             var method = ParseMethod(startLine[0]);
             (string url, Dictionary<string, string> query) = ParseUrl(startLine[1]);
 
-            HeaderCollection headers = ParseHeaders(lines.Skip(1));
+            var headers = ParseHeaders(lines.Skip(1));
 
             var cookies = ParseCookies(headers);
 
@@ -68,9 +66,9 @@ namespace BasicWebServer.Server.HTTP
 
         private static (string url, Dictionary<string, string> query) ParseUrl(string queryString)
         {
-            string url = string.Empty;
+            string url = String.Empty;
             Dictionary<string, string> query = new Dictionary<string, string>();
-            var parts = queryString.Split("?", 2);
+            var parts = queryString.Split("?",2);
 
             if (parts.Length > 1)
             {
@@ -79,7 +77,7 @@ namespace BasicWebServer.Server.HTTP
                 foreach (var pair in queryParams)
                 {
                     var param = pair.Split('=');
-
+                    
                     if (param.Length == 2)
                     {
                         query.Add(param[0], param[1]);
@@ -88,76 +86,21 @@ namespace BasicWebServer.Server.HTTP
             }
 
             url = parts[0];
+
             return (url, query);
         }
 
-        private static Session GetSession(CookieCollection cookies)
+        private static Method ParseMethod(string method)
         {
-            var sessionId = cookies.Contains(Session.SessionCookieName)
-                ? cookies[Session.SessionCookieName]
-                : Guid.NewGuid().ToString();
-
-            if (!Sessions.ContainsKey(sessionId))
+            try
             {
-                Sessions[sessionId] = new Session(sessionId);
+                return (Method)Enum.Parse(typeof(Method), method, true);
             }
-
-            return Sessions[sessionId];
-        }
-
-        private static CookieCollection ParseCookies(HeaderCollection headers)
-        {
-            var cookieCollection = new CookieCollection();
-
-            if (headers.Contains(Header.Cookie))
+            catch (Exception)
             {
-                var cookieHeader = headers[Header.Cookie];
-
-                var allCookies = cookieHeader.Split(';');
-
-                foreach (var cookieText in allCookies)
-                {
-                    var cookieParts = cookieText.Split('=');
-
-                    var cookieName = cookieParts[0].Trim();
-                    var cookieValue = cookieParts[1].Trim();
-
-                    cookieCollection.Add(cookieName, cookieValue);
-
-                }
+                throw new InvalidOperationException($"Method '{method}' is not supported");
             }
-
-            return cookieCollection;
         }
-
-        private static Dictionary<string, string> ParseForm(HeaderCollection headers, string body)
-        {
-            var formCollection = new Dictionary<string, string>();
-
-            if (headers.Contains(Header.ContentType) &&
-                headers[Header.ContentType] == ContentType.FormUrlEncoded)
-            {
-                var parsedResult = ParseFormData(body);
-
-                foreach (var (name, value) in parsedResult)
-                {
-                    formCollection.Add(name, value);
-                }
-
-            }
-
-            return formCollection;
-        }
-
-        private static Dictionary<string, string> ParseFormData(string bodyLines)
-                    => HttpUtility.UrlDecode(bodyLines)
-                        .Split('&')
-                        .Select(part => part.Split('='))
-                        .Where(part => part.Length == 2)
-                        .ToDictionary(
-                        part => part[0],
-                        part => part[1],
-                        StringComparer.InvariantCultureIgnoreCase);
 
         private static HeaderCollection ParseHeaders(IEnumerable<string> headerLines)
         {
@@ -186,16 +129,70 @@ namespace BasicWebServer.Server.HTTP
             return headerCollection;
         }
 
-        private static Method ParseMethod(string method)
+        private static CookieCollection ParseCookies(HeaderCollection headers)
         {
-            try
+            var cookieCollection = new CookieCollection();
+
+            if (headers.Contains(Header.Cookie))
             {
-                return (Method)Enum.Parse(typeof(Method), method, true);
+                var cookieHeader = headers[Header.Cookie];
+
+                var allCookies = cookieHeader.Split(';');
+
+                foreach (var cookieText in allCookies)
+                {
+                    var cookieParts = cookieText.Split('=');
+
+                    var cookieName = cookieParts[0].Trim();
+                    var cookieValue = cookieParts[1].Trim();
+
+                    cookieCollection.Add(cookieName, cookieValue);
+                }
             }
-            catch (Exception)
-            {
-                throw new InvalidOperationException($"Method '{method}' is not supported");
-            }
+
+            return cookieCollection;
         }
+
+        private static Session GetSession(CookieCollection cookies)
+        {
+            var sessionId = cookies.Contains(Session.SessionCookieName)
+                ? cookies[Session.SessionCookieName]
+                : Guid.NewGuid().ToString();
+
+            if (!Sessions.ContainsKey(sessionId))
+            {
+                Sessions[sessionId] = new Session(sessionId);
+            }
+
+            return Sessions[sessionId];
+        }
+
+        private static Dictionary<string, string> ParseForm(HeaderCollection headers, string body)
+        {
+            var formCollection = new Dictionary<string, string>();
+
+            if (headers.Contains(Header.ContentType)
+                && headers[Header.ContentType] == ContentType.FormUrlEncoded)
+            {
+                var parsedResult = ParseFormData(body);
+
+                foreach (var (name, value) in parsedResult)
+                {
+                    formCollection.Add(name, value);
+                }
+            }
+
+            return formCollection;
+        }
+
+        private static Dictionary<string, string> ParseFormData(string bodyLines)
+           => HttpUtility.UrlDecode(bodyLines)
+               .Split('&')
+               .Select(part => part.Split('='))
+               .Where(part => part.Length == 2)
+               .ToDictionary(
+                   part => part[0],
+                   part => part[1],
+                   StringComparer.InvariantCultureIgnoreCase);
     }
 }

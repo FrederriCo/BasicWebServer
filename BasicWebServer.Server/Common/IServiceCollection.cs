@@ -12,7 +12,7 @@ namespace BasicWebServer.Server.Common
             where TService : class;
 
         TService Get<TService>()
-            where TService : class;
+            where TService: class;
 
         object CreateInstance(Type serviceType);
     }

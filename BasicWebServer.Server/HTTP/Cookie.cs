@@ -1,5 +1,4 @@
-﻿
-using BasicWebServer.Server.Common;
+﻿using BasicWebServer.Server.Common;
 
 namespace BasicWebServer.Server.HTTP
 {

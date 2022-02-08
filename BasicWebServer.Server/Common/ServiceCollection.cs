@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BasicWebServer.Server.Common
 {
     public class ServiceCollection : IServiceCollection
     {
         private readonly Dictionary<Type, Type> services;
+
         public ServiceCollection()
         {
             services = new Dictionary<Type, Type>();
@@ -34,9 +37,9 @@ namespace BasicWebServer.Server.Common
             }
             else if (serviceType.IsInterface)
             {
-                throw new InvalidOperationException($"Service {serviceType.FullName} is not registred");
+                throw new InvalidOperationException($"Service {serviceType.FullName} is not registered");
             }
-
+            
             var constructors = serviceType.GetConstructors();
 
             if (constructors.Length > 1)
@@ -45,19 +48,18 @@ namespace BasicWebServer.Server.Common
             }
 
             var constructor = constructors.First();
-            var parametars = constructor.GetParameters();
-            var parametarValues = new object[parametars.Length];
+            var parameters = constructor.GetParameters();
+            var parameterValues = new object[parameters.Length];
 
-            for (int i = 0; i < parametarValues.Length; i++)
+            for (int i = 0; i < parameterValues.Length; i++)
             {
-                var parametarType = parametars[i].ParameterType;
-                var parametarValue = CreateInstance(parametarType);
+                var parameterType = parameters[i].ParameterType;
+                var parameterValue = CreateInstance(parameterType);
 
-                parametarValues[i] = parametarValues;
+                parameterValues[i] = parameterValue;
             }
 
-            return constructor.Invoke(parametarValues);
-           
+            return constructor.Invoke(parameterValues);
         }
 
         public TService Get<TService>() where TService : class
